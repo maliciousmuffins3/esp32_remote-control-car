@@ -5,6 +5,8 @@ MotorDriver::L298NMotor motor2(IN3, IN4, ENA2);
 
 TaskHandle_t TaskHandle_MotorTask = NULL;
 SemaphoreHandle_t motorMutex = NULL;
+SemaphoreHandle_t motor1SpeedMutex = NULL;
+SemaphoreHandle_t motor2SpeedMutex = NULL;
 Motor_State motorState = STANDBY;
 
 int motor1Speed = 255;
@@ -57,8 +59,8 @@ void motorTask(void *pvParameters)
             Serial.println("Nothing to do");
             break;
         }
+        vTaskDelay(pdMS_TO_TICKS(100)); // Prevent task from hogging CPU
     }
-    vTaskDelay(pdMS_TO_TICKS(100)); // Prevent task from hogging CPU
 }
 
 void ChangeMotorState(Motor_State state)
@@ -70,6 +72,32 @@ void ChangeMotorState(Motor_State state)
     }
     else
     {
-        Serial.println("Failed to acquire display mutex");
+        Serial.println("Failed to acquire motor mutex");
+    }
+}
+
+void ChangeMotor1Speed(int speed)
+{
+    if (xSemaphoreTake(motor1SpeedMutex, portMAX_DELAY) == pdTRUE)
+    {
+        motor1Speed = speed;
+        xSemaphoreGive(motor1SpeedMutex);
+    }
+    else
+    {
+        Serial.println("Failed to acquire motor speed mutex");
+    }
+}
+
+void ChangeMotor2Speed(int speed)
+{
+    if (xSemaphoreTake(motor2SpeedMutex, portMAX_DELAY) == pdTRUE)
+    {
+        motor2Speed = speed;
+        xSemaphoreGive(motor2SpeedMutex);
+    }
+    else
+    {
+        Serial.println("Failed to acquire motor speed mutex");
     }
 }

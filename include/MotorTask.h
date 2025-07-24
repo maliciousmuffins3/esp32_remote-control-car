@@ -29,6 +29,8 @@ extern MotorDriver::L298NMotor motor2;
 
 extern TaskHandle_t TaskHandle_MotorTask;
 extern SemaphoreHandle_t motorMutex;
+extern SemaphoreHandle_t motor1SpeedMutex;
+extern SemaphoreHandle_t motor1SpeedMutex;
 extern Motor_State motorState;
 extern int motor1Speed;
 extern int motor1Speed;
