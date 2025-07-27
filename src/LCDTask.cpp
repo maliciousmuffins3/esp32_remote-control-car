@@ -7,25 +7,45 @@ TaskHandle_t TaskHandle_LCDTask = NULL;
 
 void LCDTask(void *pvParameters)
 {
+    DisplayState prevState = LCD_STANDBY;
+    COMMAND_STATE prevMode = AUTOMATIC;
+    TickType_t lastWakeTime = xTaskGetTickCount();
     while (true)
     {
+        bool isVoiceCommand = commandState == VOICE_COMMAND;
+        if (prevMode != commandState)
+        {
+            if (prevMode == VOICE_COMMAND && !isVoiceCommand)
+            {
+                ChangeLCDState(LCD_SEQUENCE1);
+            }
+            else
+            {
+                ChangeLCDState(LCD_STANDBY); // What if prev is VOICE COMMAND
+            }
+            prevMode = commandState;
+        }
+
+        int sequenceDelay = 5000; // Delay for motor actions
+        if (prevState != displayState)
+            lcd.clear();
         switch (displayState)
         {
         case SCROLLNAME:
+            prevState = SCROLLNAME;
             Serial.println("Scrolling Name");
-            lcd.clear();
             scrollText("MATTHEW ARELLANO ROXAS", 300);
             ChangeLCDState(BLINKNAME); // Safely change state
             break;
         case BLINKNAME:
+            prevState = BLINKNAME;
             Serial.println("Blinking Name");
-            lcd.clear();
             blinkText("MATTHEW A. ROXAS", 1000, 3);
             ChangeLCDState(PRINTREADY); // Safely change state
             break;
         case PRINTREADY:
+            prevState = PRINTREADY;
             Serial.println("Display Ready");
-            lcd.clear();
             lcd.setCursor(0, 0); // Set cursor to first row
             lcd.print("READY!");
             vTaskDelay(pdMS_TO_TICKS(3000)); // Delay to show "Ready" message
@@ -33,92 +53,60 @@ void LCDTask(void *pvParameters)
             break;
 
         case LCD_SEQUENCE1:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 1");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 1 > CW");
+            displaySequenceNumber("SEQUENCE 1", prevState);
+            prevState = LCD_SEQUENCE1; // Wait for the function above
+            displayMotorAction("MOTOR 1 > CW");
             ChangeMotorState(SEQUENCE1);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE2);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE2);
             break;
         case LCD_SEQUENCE2:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 2");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 1 > C-CW");
+            displaySequenceNumber("SEQUENCE 2", prevState);
+            prevState = LCD_SEQUENCE2;
+            displayMotorAction("MOTOR 1 > C-CW");
             ChangeMotorState(SEQUENCE2);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE3);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE3);
             break;
         case LCD_SEQUENCE3:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 3");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 2 > CW");
+            displaySequenceNumber("SEQUENCE 3", prevState);
+            prevState = LCD_SEQUENCE3;
+            displayMotorAction("MOTOR 2 > CW");
             ChangeMotorState(SEQUENCE3);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE4);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE4);
             break;
         case LCD_SEQUENCE4:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 4");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 2 > C-CW");
+            displaySequenceNumber("SEQUENCE 4", prevState);
+            prevState = LCD_SEQUENCE4;
+            displayMotorAction("MOTOR 2 > C-CW");
             ChangeMotorState(SEQUENCE4);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE5);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE5);
             break;
         case LCD_SEQUENCE5:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 5");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 1 > CW");
-            lcd.setCursor(0, 1);
-            lcd.print("MOTOR 2 > C-CW");
+            displaySequenceNumber("SEQUENCE 5", prevState);
+            prevState = LCD_SEQUENCE5;
+            displayMotorAction("MOTOR 1 > CW", "MOTOR 2 > C-CW");
             ChangeMotorState(SEQUENCE5);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE6);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE6);
             break;
         case LCD_SEQUENCE6:
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("SEQUENCE 5");
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            lcd.clear();
-            lcd.setCursor(0, 0);
-            lcd.print("MOTOR 1 > C-CW");
-            lcd.setCursor(0, 1);
-            lcd.print("MOTOR 2 > CW");
+            displaySequenceNumber("SEQUENCE 6", prevState);
+            prevState = LCD_SEQUENCE6;
+            displayMotorAction("MOTOR 1 > C-CW", "MOTOR 2 > CW");
             ChangeMotorState(SEQUENCE6);
-            vTaskDelay(pdMS_TO_TICKS(3000)); // Wait for motor action
-            ChangeMotorState(STANDBY);       // Stop motor after action
-            ChangeLCDState(LCD_SEQUENCE1);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE1);
+            break;
+        case LCD_STANDBY:
+            prevState = LCD_STANDBY;
+            lcd.setCursor(0, 0);
+            lcd.print("STANDBY");
+            vTaskDelay(pdMS_TO_TICKS(1000));
+            ChangeMotorState(STANDBY);
             break;
 
         default:
             Serial.println("Nothing to do");
             break;
         }
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -127,7 +115,7 @@ void LCDTaskInit()
     lcd.init();      // Initialize the LCD
     lcd.backlight(); // Turn on the backlight
     displayMutex = xSemaphoreCreateMutex();
-    xTaskCreatePinnedToCore(LCDTask, "LCDTask", (2048 * 4), NULL, 1, &TaskHandle_LCDTask, 0);
+    xTaskCreatePinnedToCore(LCDTask, "LCDTask", (1024 * 7), NULL, 1, &TaskHandle_LCDTask, 0);
 }
 
 void scrollText(String text, int delayMs)
@@ -159,17 +147,50 @@ void blinkText(String text, int delayMs, int blinkCount)
         vTaskDelay(pdMS_TO_TICKS(delayMs));
     }
 }
+
 void ChangeLCDState(DisplayState state)
 {
     // Attempt to take the mutex, block forever if necessary
     if (xSemaphoreTake(displayMutex, portMAX_DELAY) == pdTRUE)
     {
-        displayState = state;         // Safely update shared state
-        xSemaphoreGive(displayMutex); // Always give it back
+        displayState = state;
+        xSemaphoreGive(displayMutex);
     }
     else
     {
-        // Optional: log or handle failure (shouldn’t happen with portMAX_DELAY)
         Serial.println("Failed to acquire display mutex");
     }
+}
+
+void isNotVoiceCommand(bool isVoiceCommand, int sequenceDelay, DisplayState nextState)
+{
+    if (!isVoiceCommand)
+    {
+        vTaskDelay(pdMS_TO_TICKS(sequenceDelay)); // Wait for motor action
+        ChangeMotorState(STANDBY);
+        ChangeLCDState(nextState);
+    }
+    else
+    {
+        // Add small delay to prevent infinite fast looping
+        vTaskDelay(pdMS_TO_TICKS(200)); // Prevent screen spamming
+    }
+}
+
+void displaySequenceNumber(String sequence_str, DisplayState prevState)
+{
+    if (prevState == displayState)
+        return;
+    lcd.setCursor(0, 0);
+    lcd.print(sequence_str);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    lcd.clear();
+}
+
+void displayMotorAction(String row1_str, String row2_str)
+{
+    lcd.setCursor(0, 0);
+    lcd.print(row1_str);
+    lcd.setCursor(0, 1);
+    lcd.print(row2_str);
 }

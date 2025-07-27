@@ -16,13 +16,13 @@ enum Motor_State
     STANDBY,
 };
 
-#define ENA 5
-#define IN1 18
-#define IN2 19
+#define ENA 13
+#define IN1 14
+#define IN2 15
 
-#define ENA2 25
-#define IN3 26
-#define IN4 27
+#define ENA2 18
+#define IN3 19
+#define IN4 25
 
 extern MotorDriver::L298NMotor motor1;
 extern MotorDriver::L298NMotor motor2;

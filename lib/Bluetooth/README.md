@@ -26,7 +26,7 @@ modules/
 ```cpp
 #include "BluetoothModule.h"
 
-ESP32::BluetoothModule bt("ESP32_BT_Device");
+BluetoothModule bt("ESP32_BT_Device");
 
 void setup() {
     Serial.begin(115200);
