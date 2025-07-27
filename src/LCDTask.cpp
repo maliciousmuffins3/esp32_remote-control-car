@@ -54,44 +54,23 @@ void LCDTask(void *pvParameters)
 
         case LCD_SEQUENCE1:
             displaySequenceNumber("SEQUENCE 1", prevState);
-            prevState = LCD_SEQUENCE1; // Wait for the function above
-            displayMotorAction("MOTOR 1 > CW");
+            prevState = LCD_SEQUENCE1;
+            displayMotorAction("MOTOR 1 > CW", "MOTOR 2 > CW");
             ChangeMotorState(SEQUENCE1);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE2);
             break;
         case LCD_SEQUENCE2:
             displaySequenceNumber("SEQUENCE 2", prevState);
             prevState = LCD_SEQUENCE2;
-            displayMotorAction("MOTOR 1 > C-CW");
+            displayMotorAction("MOTOR 1 > C-CW", "MOTOR 2 > C-CW");
             ChangeMotorState(SEQUENCE2);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE3);
             break;
         case LCD_SEQUENCE3:
             displaySequenceNumber("SEQUENCE 3", prevState);
             prevState = LCD_SEQUENCE3;
-            displayMotorAction("MOTOR 2 > CW");
-            ChangeMotorState(SEQUENCE3);
-            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE4);
-            break;
-        case LCD_SEQUENCE4:
-            displaySequenceNumber("SEQUENCE 4", prevState);
-            prevState = LCD_SEQUENCE4;
-            displayMotorAction("MOTOR 2 > C-CW");
-            ChangeMotorState(SEQUENCE4);
-            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE5);
-            break;
-        case LCD_SEQUENCE5:
-            displaySequenceNumber("SEQUENCE 5", prevState);
-            prevState = LCD_SEQUENCE5;
             displayMotorAction("MOTOR 1 > CW", "MOTOR 2 > C-CW");
-            ChangeMotorState(SEQUENCE5);
-            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE6);
-            break;
-        case LCD_SEQUENCE6:
-            displaySequenceNumber("SEQUENCE 6", prevState);
-            prevState = LCD_SEQUENCE6;
-            displayMotorAction("MOTOR 1 > C-CW", "MOTOR 2 > CW");
-            ChangeMotorState(SEQUENCE6);
+            ChangeMotorState(SEQUENCE3);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE1);
             break;
         case LCD_STANDBY:
@@ -115,7 +94,8 @@ void LCDTaskInit()
     lcd.init();      // Initialize the LCD
     lcd.backlight(); // Turn on the backlight
     displayMutex = xSemaphoreCreateMutex();
-    xTaskCreatePinnedToCore(LCDTask, "LCDTask", (1024 * 7), NULL, 1, &TaskHandle_LCDTask, 0);
+    // xTaskCreatePinnedToCore(LCDTask, "LCDTask", (1024 * 7), NULL, 1, &TaskHandle_LCDTask, 0);
+    xTaskCreate(LCDTask, "LCDTask", (1024 * 7), NULL, 1, &TaskHandle_LCDTask);
 }
 
 void scrollText(String text, int delayMs)

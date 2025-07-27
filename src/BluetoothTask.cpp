@@ -17,7 +17,7 @@ void BluetoothTaskInit()
         return; // or handle error safely
     }
     // Create the Bluetooth task
-    xTaskCreate(BluetoothTask, "BluetoothTask", 3064, NULL, 1, &TaskHandle_BluetoothTask);
+    xTaskCreatePinnedToCore(BluetoothTask, "BluetoothTask", 4096, NULL, 1, &TaskHandle_BluetoothTask, 1);
 }
 
 void BluetoothTask(void *pvParameters)
@@ -62,15 +62,6 @@ void BluetoothTask(void *pvParameters)
         case CMD_SEQ3:
             ChangeLCDState(LCD_SEQUENCE3);
             break;
-        case CMD_SEQ4:
-            ChangeLCDState(LCD_SEQUENCE4);
-            break;
-        case CMD_SEQ5:
-            ChangeLCDState(LCD_SEQUENCE5);
-            break;
-        case CMD_SEQ6:
-            ChangeLCDState(LCD_SEQUENCE6);
-            break;
         case CMD_STOP:
             ChangeLCDState(LCD_STANDBY);
             break;
@@ -78,7 +69,6 @@ void BluetoothTask(void *pvParameters)
             Serial.println("Unknown command");
             break;
         }
-        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 

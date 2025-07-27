@@ -33,27 +33,15 @@ void motorTask(void *pvParameters)
         {
         case SEQUENCE1:
             motor1.backward();
-            motor2.stop();
+            motor2.backward();
             break;
         case SEQUENCE2:
             motor1.forward();
-            motor2.stop();
+            motor2.forward();
             break;
         case SEQUENCE3:
-            motor2.backward();
-            motor1.stop();
-            break;
-        case SEQUENCE4:
-            motor1.stop();
-            motor2.forward();
-            break;
-        case SEQUENCE5:
             motor1.backward();
             motor2.forward();
-            break;
-        case SEQUENCE6:
-            motor1.forward();
-            motor2.backward();
             break;
         case STANDBY:
             motor1.stop();

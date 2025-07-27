@@ -14,9 +14,6 @@ enum CommandResult
     CMD_SEQ1,
     CMD_SEQ2,
     CMD_SEQ3,
-    CMD_SEQ4,
-    CMD_SEQ5,
-    CMD_SEQ6,
     CMD_STOP
 };
 

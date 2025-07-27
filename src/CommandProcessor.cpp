@@ -25,18 +25,12 @@ CommandResult processCommand(String &msg)
         return CMD_TURN_ON_VOICE;
     if (msg == "turnoffvoicecommand" || msg == "turnoffvoicecommands")
         return CMD_TURN_OFF_VOICE;
-    if (msg == "sequencenumber1")
+    if (msg == "sequencenumber1" || msg == "sequencenumberone")
         return CMD_SEQ1;
-    if (msg == "sequencenumber2")
+    if (msg == "sequencenumber2" || msg == "sequencenumbertwo")
         return CMD_SEQ2;
-    if (msg == "sequencenumber3")
+    if (msg == "sequencenumber3" || msg == "sequencenumberthree")
         return CMD_SEQ3;
-    if (msg == "sequencenumber4")
-        return CMD_SEQ4;
-    if (msg == "sequencenumber5")
-        return CMD_SEQ5;
-    if (msg == "sequencenumber6")
-        return CMD_SEQ6;
     if (msg == "stop")
         return CMD_STOP;
 
