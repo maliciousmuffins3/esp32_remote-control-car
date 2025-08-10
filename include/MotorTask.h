@@ -4,22 +4,15 @@
 // Includes
 #include <Arduino.h>
 #include <L298NMotor.h>
+#include "Pins.h"
 
 enum Motor_State
 {
     SEQUENCE1,
     SEQUENCE2,
-    SEQUENCE3, 
+    SEQUENCE3,
     STANDBY,
 };
-
-#define ENA 5
-#define IN1 18
-#define IN2 19
-
-#define ENA2 32
-#define IN3 14
-#define IN4 33
 
 extern MotorDriver::L298NMotor motor1;
 extern MotorDriver::L298NMotor motor2;

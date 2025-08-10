@@ -4,6 +4,7 @@
 #include <LiquidCrystal_I2C.h>
 #include "MotorTask.h"
 #include "BluetoothTask.h"
+#include "ServoTask.h"
 
 enum DisplayState
 {
@@ -13,6 +14,11 @@ enum DisplayState
     LCD_SEQUENCE1,
     LCD_SEQUENCE2,
     LCD_SEQUENCE3,
+    LCD_SEQUENCE4,
+    LCD_SEQUENCE5,
+    LCD_SEQUENCE6,
+    LCD_SEQUENCE7,
+    LCD_SEQUENCE8,
     LCD_STANDBY
 };
 
@@ -29,6 +35,6 @@ void ChangeLCDState(DisplayState state);
 
 void isNotVoiceCommand(bool isVoiceCommand, int sequenceDelay, DisplayState nextState);
 void displaySequenceNumber(String sequence_str, DisplayState prevState);
-void displayMotorAction(String row1_str, String row2_str = "");
+void displayText(String row1_str, String row2_str = "");
 
 #endif // LCDTASK_H

@@ -53,26 +53,67 @@ void LCDTask(void *pvParameters)
             break;
 
         case LCD_SEQUENCE1:
+            ChangeServoState(SERVO_STANDBY);
             displaySequenceNumber("SEQUENCE 1", prevState);
             prevState = LCD_SEQUENCE1;
-            displayMotorAction("MOTOR 1 > CW", "MOTOR 2 > CW");
+            displayText("MOTOR 1 > CW", "MOTOR 2 > CW");
             ChangeMotorState(SEQUENCE1);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE2);
             break;
         case LCD_SEQUENCE2:
+            ChangeServoState(SERVO_STANDBY);
             displaySequenceNumber("SEQUENCE 2", prevState);
             prevState = LCD_SEQUENCE2;
-            displayMotorAction("MOTOR 1 > C-CW", "MOTOR 2 > C-CW");
+            displayText("MOTOR 1 > C-CW", "MOTOR 2 > C-CW");
             ChangeMotorState(SEQUENCE2);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE3);
             break;
         case LCD_SEQUENCE3:
+            ChangeServoState(SERVO_STANDBY);
             displaySequenceNumber("SEQUENCE 3", prevState);
             prevState = LCD_SEQUENCE3;
-            displayMotorAction("MOTOR 1 > CW", "MOTOR 2 > C-CW");
+            displayText("MOTOR 1 > CW", "MOTOR 2 > C-CW");
             ChangeMotorState(SEQUENCE3);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE4);
+            break;
+
+        // Additional sequences
+        case LCD_SEQUENCE4:
+            displaySequenceNumber("Steer", prevState);
+            prevState = LCD_SEQUENCE4;
+            displayText("MID to LEFT");
+            ChangeServoState(SERVO_SEQUENCE1);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE5);
+            break;
+        case LCD_SEQUENCE5:
+            displaySequenceNumber("Steer", prevState);
+            prevState = LCD_SEQUENCE5;
+            displayText("LEFT to MID");
+            ChangeServoState(SERVO_SEQUENCE2);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE6);
+            break;
+        case LCD_SEQUENCE6:
+            displaySequenceNumber("Steer", prevState);
+            prevState = LCD_SEQUENCE6;
+            displayText("MID to RIGHT");
+            ChangeServoState(SERVO_SEQUENCE3);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE7);
+            break;
+        case LCD_SEQUENCE7:
+            displaySequenceNumber("Steer", prevState);
+            prevState = LCD_SEQUENCE7;
+            displayText("RIGHT to LEFT");
+            ChangeServoState(SERVO_SEQUENCE4);
+            isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE8);
+            break;
+        case LCD_SEQUENCE8:
+            displaySequenceNumber("Steer", prevState);
+            prevState = LCD_SEQUENCE8;
+            displayText("LEFT to MID");
+            ChangeServoState(SERVO_SEQUENCE5);
             isNotVoiceCommand(isVoiceCommand, sequenceDelay, LCD_SEQUENCE1);
             break;
+
         case LCD_STANDBY:
             prevState = LCD_STANDBY;
             lcd.setCursor(0, 0);
@@ -167,7 +208,7 @@ void displaySequenceNumber(String sequence_str, DisplayState prevState)
     lcd.clear();
 }
 
-void displayMotorAction(String row1_str, String row2_str)
+void displayText(String row1_str, String row2_str)
 {
     lcd.setCursor(0, 0);
     lcd.print(row1_str);

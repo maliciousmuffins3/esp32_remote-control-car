@@ -1,6 +1,7 @@
 #include "LCDTask.h"
 #include "MotorTask.h"
 #include "BluetoothTask.h"
+#include "ServoTask.h"
 
 void setup()
 {
@@ -10,6 +11,7 @@ void setup()
     LCDTaskInit();
     MotorTaskInit();
     BluetoothTaskInit();
+    ServoTaskInit();
 }
 
 void loop()
